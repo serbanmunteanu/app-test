@@ -1,0 +1,5 @@
+name: app-test
+imageRepo: serbanstussy/repo-test
+imageTag: latest
+containerPort: 3000
+svcPort: 3500
