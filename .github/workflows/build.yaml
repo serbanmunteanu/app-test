@@ -36,19 +36,13 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Install Helm
-        run: |
-          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITAL_OCEAN_TOKEN }}
 
-      - name: Create .kube directory
-        run: mkdir -p $HOME/.kube
-
-      - name: Set up Kube config
-        env:
-            KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-        run: |
-          echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 k8s-1-28-2-do-0-fra1-1704282339158
 
       - name: Helm Deploy
         env:
