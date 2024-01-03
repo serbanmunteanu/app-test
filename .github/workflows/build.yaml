@@ -33,5 +33,7 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ env.SHORT_SHA}}
         run: |
+          echo "ECR_REGISTRY=$ECR_REGISTRY"
+          echo "ECR_REPOSITORY=$ECR_REPOSITORY"
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
