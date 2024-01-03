@@ -19,3 +19,5 @@ spec:
         image: {{ .Values.imageRepo }}:{{ .Values.imageTag }}
         ports:
         - containerPort: {{ .Values.containerPort }}
+      imagePullSecrets:
+        - name: regcred
