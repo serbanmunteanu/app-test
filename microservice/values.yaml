@@ -1,4 +1,4 @@
-name: app-test
+name: apptest
 imageRepo: 107008713742.dkr.ecr.eu-central-1.amazonaws.com/app-test
 imageTag: e7cd2a6c
 containerPort: 3000

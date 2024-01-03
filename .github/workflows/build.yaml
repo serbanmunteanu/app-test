@@ -50,4 +50,4 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ env.SHORT_SHA }}
         run: |
-          helm upgrade --install app-test microservice --set image.tag={{ $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG }}
+          helm upgrade --install apptest microservice/ --set image.tag={{ $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG }}
