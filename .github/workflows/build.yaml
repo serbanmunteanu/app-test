@@ -40,7 +40,9 @@ jobs:
         run: mkdir -p $HOME/.kube
 
       - name: Set up Kube config
-        run: echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
 
       - name: Helm Deploy
         env:
@@ -48,4 +50,4 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ env.SHORT_SHA }}
         run: |
-          helm upgrade --install apptest-$IMAGE_TAB microservice --set image.tag=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          helm upgrade --install apptest microservice --set image.tag={{$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG}}
