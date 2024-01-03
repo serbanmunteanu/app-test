@@ -44,8 +44,10 @@ jobs:
         run: mkdir -p $HOME/.kube
 
       - name: Set up Kube config
+        env:
+            KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         run: |
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+          echo $KUBE_CONFIG | base64 -d > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
 
       - name: Helm Deploy
