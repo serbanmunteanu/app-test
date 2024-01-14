@@ -14,10 +14,33 @@ spec:
       labels:
         app: {{ .Values.name }}
     spec:
+      serviceAccountName: secrets-manager-access-sa
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: aws-secrets
       containers:
       - name: {{ .Values.name }}
         image: {{ .Values.imageRepo }}:{{ .Values.imageTag }}
         ports:
         - containerPort: {{ .Values.containerPort }}
+        env:
+          - name: TEST
+            valueFrom:
+              secretKeyRef:
+                name: k8s-secret
+                key: TEST
+          - name: SERBAN
+            valueFrom:
+              secretKeyRef:
+                name: k8s-secret
+                key: SERBAN
+        volumeMounts:
+          - name: secrets-store-inline
+            mountPath: "/mnt/secrets-store"
+            readOnly: true
       imagePullSecrets:
         - name: regcred
