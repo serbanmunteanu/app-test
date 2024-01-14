@@ -1,5 +1,5 @@
 name: apptest
-imageRepo: 107008713742.dkr.ecr.eu-central-1.amazonaws.com/app-test
+imageRepo: 140209482387.dkr.ecr.us-west-2.amazonaws.com/app-test
 imageTag: e7cd2a6c
 containerPort: 3000
 svcPort: 80
