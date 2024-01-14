@@ -38,6 +38,11 @@ spec:
               secretKeyRef:
                 name: k8s-secret
                 key: SERBAN
+          - name: SERBYX
+            valueFrom:
+              secretKeyRef:
+                name: k8s-secret
+                key: SERBYX
         volumeMounts:
           - name: secrets-store-inline
             mountPath: "/mnt/secrets-store"
