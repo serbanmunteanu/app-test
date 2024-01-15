@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Common Steps
-        uses: ./.github/actions/common
+        uses: ./.github/actions/common-steps
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
