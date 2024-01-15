@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  APP_NAME: apptest
+
 jobs:
   Build-and-Push:
     runs-on: ubuntu-latest
@@ -65,15 +68,17 @@ jobs:
         run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_OUTPUT
 
       - name: Update kube config
-        run: aws eks update-kubeconfig --name kinkmade-cluster --region us-west-2
+        run: aws eks update-kubeconfig --name ${{ secrets.K8S_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
 
       - name: Helm Deploy
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ steps.short-sha.outputs.SHORT_SHA }}
+          K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
+          SECRETS_MANAGER_KEY: ${{ secrets.SECRETS_MANAGER_KEY }}
         run: |
-          helm upgrade --install apptest microservice/ --set "imageTag=$IMAGE_TAG"
+          helm upgrade --install $APP_NAME microservice/ -n $K8S_NAMESPACE --set "imageTag=$IMAGE_TAG" --set "secretsManagerKey=$SECRETS_MANAGER_KEY"
 
   Deploy-Production:
     needs: [Build-and-Push, Deploy-Staging]
@@ -101,12 +106,14 @@ jobs:
         run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_OUTPUT
 
       - name: Update kube config
-        run: aws eks update-kubeconfig --name kinkmade-cluster --region us-west-2
+        run: aws eks update-kubeconfig --name ${{ secrets.K8S_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
 
       - name: Helm Deploy
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ steps.short-sha.outputs.SHORT_SHA }}
+          K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE }}
+          SECRETS_MANAGER_KEY: ${{ secrets.SECRETS_MANAGER_KEY }}
         run: |
-          helm upgrade --install apptest microservice/ --set "imageTag=$IMAGE_TAG"
+          helm upgrade --install $APP_NAME microservice/ -n $K8S_NAMESPACE --set "imageTag=$IMAGE_TAG" --set "secretsManagerKey=$SECRETS_MANAGER_KEY"

@@ -1,5 +1,6 @@
 name: apptest
 imageRepo: 140209482387.dkr.ecr.us-west-2.amazonaws.com/app-test
 imageTag: 5fedec68
+secretsManagerKey: apptest
 containerPort: 3000
 svcPort: 80
