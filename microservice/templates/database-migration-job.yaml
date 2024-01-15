@@ -3,8 +3,8 @@ kind: Job
 metadata:
   name: "{{ .Release.Name }}-{{ .Release.Revision}}-db-migration"
   annotations:
-    "helm.sh/hook": pre-upgrade,pre-install
-    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "-4"
     "helm.sh/hook-delete-policy": "hook-succeeded,hook-failed"
 spec:
   backoffLimit: 0
