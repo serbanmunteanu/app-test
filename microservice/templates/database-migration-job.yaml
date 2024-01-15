@@ -10,8 +10,38 @@ spec:
   backoffLimit: 0
   template:
     spec:
+      serviceAccountName: secrets-manager-access-sa
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: aws-secrets
       containers:
         - name: {{ .Values.name }}
           image: {{ .Values.imageRepo }}:{{ .Values.imageTag }}
+          env:
+            - name: TEST
+              valueFrom:
+                secretKeyRef:
+                  name: k8s-secret
+                  key: TEST
+            - name: SERBAN
+              valueFrom:
+                secretKeyRef:
+                  name: k8s-secret
+                  key: SERBAN
+            - name: SERBYX
+              valueFrom:
+                secretKeyRef:
+                  name: k8s-secret
+                  key: SERBYX
+          volumeMounts:
+            - name: secrets-store-inline
+              mountPath: "/mnt/secrets-store"
+              readOnly: true
           command: ["npx", "prisma", "migrate", "deploy"]
+      imagePullSecrets:
+        - name: regcred
       restartPolicy: Never
