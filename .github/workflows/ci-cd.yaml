@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  continuous-integration:
+  Build-and-Push:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -39,8 +39,45 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-  continuous-deployment:
+  Deploy-Staging:
     needs: [continuous-integration]
+    environment: 'staging'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-password: 'true'
+
+      - name: Add SHORT_SHA env property with commit short sha
+        id: short-sha
+        run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_OUTPUT
+
+      - name: Update kube config
+        run: aws eks update-kubeconfig --name kinkmade-cluster --region us-west-2
+
+      - name: Helm Deploy
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ steps.short-sha.outputs.SHORT_SHA }}
+        run: |
+          helm upgrade --install apptest microservice/ --set "imageTag=$IMAGE_TAG"
+
+  Deploy-Production:
+    needs: [Build-and-Push, Deploy-Staging]
+    environment: 'production'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
