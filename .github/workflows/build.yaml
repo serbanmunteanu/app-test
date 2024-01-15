@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: CI/CD Pipeline
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  continuous-integration:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,6 +36,10 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+  continuous-deployment:
+    needs: [continuous-integration]
+    runs-on: ubuntu-latest
+    steps:
       - name: Update kube config
         run: aws eks update-kubeconfig --name kinkmade-cluster --region us-west-2
 
