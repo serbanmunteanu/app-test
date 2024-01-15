@@ -12,5 +12,5 @@ spec:
       containers:
         - name: {{ .Values.name }}
           image: {{ .Values.imageRepo }}:{{ .Values.imageTag }}
-          command: ["npm", "run", "test"]
+          command: ["npx", "prisma", "migrate", "deploy"]
       restartPolicy: Never
