@@ -9,6 +9,9 @@ jobs:
   continuous-integration:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Common Steps
         uses: ./.github/actions/common-steps
 
