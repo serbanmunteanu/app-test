@@ -1,13 +1,13 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{ .Release.Name }}-db-migration"
+  name: "{{ .Release.Name }}-{{ .Release.Revision}}-db-migration"
   annotations:
     "helm.sh/hook": pre-upgrade,pre-install
     "helm.sh/hook-weight": "-5"
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
-  backoffLimit: 2
+  backoffLimit: 0
   template:
     spec:
       containers:
