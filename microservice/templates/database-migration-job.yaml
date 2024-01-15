@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-db-migration"
+  annotations:
+    "helm.sh/hook": pre-upgrade,pre-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      containers:
+        - name: {{ .Values.name }}
+          image: {{ .Values.imageRepo }}:{{ .Values.imageTag }}
+          command: ["npm", "run", "test"]
+      restartPolicy: Never
