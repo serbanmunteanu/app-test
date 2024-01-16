@@ -10,7 +10,6 @@ export class AppService {
   }
 
   async getStatus(): Promise<any> {
-
     const isConnected = await this.prismaService.isConnected();
     return { status: isConnected };
   }
