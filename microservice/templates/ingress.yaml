@@ -10,7 +10,7 @@ spec:
   tls:
   - hosts:
       - k8s-staging.kinkyfans.com
-    secretName: {{ .Values.name}}-tls
+    secretName: letsencrypt-dns-issuer
   rules:
     - host: k8s-staging.kinkyfans.com
       http:
