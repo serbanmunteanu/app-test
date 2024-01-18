@@ -5,12 +5,11 @@ import { PrismaService } from './prisma.service';
 export class AppService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  getHello(): string {
-    return `Hello World!`;
+  async getHello(): Promise<any[]> {
+    return this.prismaService.disposableEmail.findMany();
   }
 
   async getStatus(): Promise<any> {
-
     const isConnected = await this.prismaService.isConnected();
     return { status: isConnected };
   }

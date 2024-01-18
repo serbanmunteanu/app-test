@@ -31,7 +31,7 @@ spec:
             - name: secrets-store-inline
               mountPath: "/mnt/secrets-store"
               readOnly: true
-          command: ["npm", "run", "test"]
+          command: ["npx", "prisma", "migrate", "deploy"]
       imagePullSecrets:
         - name: regcred
       restartPolicy: Never
